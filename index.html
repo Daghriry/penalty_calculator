@@ -3,10 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>حساب الشرط الجزائي للفلة</title>
+    <title>حساب الشرط الجزائي للفيلا</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            font-family: 'Almarai', sans-serif;
+        }
         body {
-            font-family: 'Cairo', sans-serif;
             direction: rtl;
             text-align: right;
             padding: 20px;
@@ -36,18 +42,16 @@
             margin-top: 10px;
             display: block;
         }
-        input[type="number"], input[type="date"] {
+        input[type="text"] {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 14px;
+            font-family: 'Almarai', sans-serif;
         }
-        input[type="number"] {
-            direction: rtl;
-        }
-        input[type="date"] {
+        input[type="text"] {
             direction: ltr;
             text-align: right;
         }
@@ -88,20 +92,52 @@
             font-size: 14px;
             color: #555;
         }
+        #formattedValue {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #007bff;
+        }
+        .flatpickr-calendar {
+            direction: rtl;
+            font-family: 'Almarai', sans-serif;
+        }
+        .flatpickr-current-month {
+            display: none;
+        }
+        .flatpickr-monthDropdown-months {
+            display: none;
+        }
+        .flatpickr-months .flatpickr-month {
+            height: auto;
+        }
+        .numInputWrapper {
+            display: none;
+        }
+        .yearselect, .monthselect {
+            width: 100%;
+            padding: 5px;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-family: 'Almarai', sans-serif;
+        }
+        .flatpickr-day {
+            font-family: 'Almarai', sans-serif;
+        }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <h2>حساب الشرط الجزائي للفلة</h2>
+    <h2>حساب الشرط الجزائي للفيلا</h2>
     <form id="calculationForm">
-        <label for="villaValue">قيمة الفلة بدون الضريبة:</label>
-        <input type="number" id="villaValue" placeholder="أدخل قيمة الفلة" required>
+        <label for="villaValue">قيمة الفيلا بدون الضريبة:</label>
+        <input type="text" id="villaValue" placeholder="أدخل قيمة الفيلا" required>
+        <div id="formattedValue"></div>
 
         <label for="deliveryDate">موعد التسليم حسب العقد:</label>
-        <input type="date" id="deliveryDate" required>
+        <input type="text" id="deliveryDate" placeholder="اختر التاريخ" required>
 
         <label for="expectedDate">موعد الاستلام المتوقع:</label>
-        <input type="date" id="expectedDate" required>
+        <input type="text" id="expectedDate" placeholder="اختر التاريخ" required>
 
         <button type="button" onclick="calculatePenalty()">احسب</button>
     </form>
@@ -118,52 +154,94 @@
     </div>
 
     <script>
-        // دالة لتحويل الأرقام الإنجليزية إلى أرقام عربية
-        function convertToArabicNumbers(input) {
-            const arabicNumbers = {
-                0: '٠',
-                1: '١',
-                2: '٢',
-                3: '٣',
-                4: '٤',
-                5: '٥',
-                6: '٦',
-                7: '٧',
-                8: '٨',
-                9: '٩'
-            };
-            return input.toString().replace(/\d/g, (digit) => arabicNumbers[digit]);
+        const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+
+        function toArabicNumeral(en) {
+            return en.replace(/[0-9]/g, w => arabicNumbers[+w]);
         }
 
-        function formatNumberWithCommas(number) {
-            // Format the number with Arabic digits and add commas
-            return convertToArabicNumbers(number.toLocaleString('en-US'));
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "،");
         }
+
+        const villaValueInput = document.getElementById('villaValue');
+        const formattedValueDiv = document.getElementById('formattedValue');
+
+        villaValueInput.addEventListener('input', function(e) {
+            this.value = this.value.replace(/[^\d]/g, '');
+            const formatted = formatNumber(this.value);
+            const arabicFormatted = toArabicNumeral(formatted);
+            formattedValueDiv.textContent = arabicFormatted;
+        });
+
+        function createCustomDatePicker(elementId) {
+            return flatpickr(elementId, {
+                locale: "ar",
+                dateFormat: "Y/m/d",
+                disableMobile: "true",
+                onOpen: function(selectedDates, dateStr, instance) {
+                    if (!instance.yearSelect) {
+                        instance.yearSelect = document.createElement("select");
+                        instance.yearSelect.className = "yearselect";
+                        const currentYear = new Date().getFullYear();
+                        for (let year = currentYear - 10; year <= currentYear + 10; year++) {
+                            const option = document.createElement("option");
+                            option.value = year;
+                            option.textContent = toArabicNumeral(year.toString());
+                            instance.yearSelect.appendChild(option);
+                        }
+                        instance.yearSelect.value = instance.currentYear;
+                        instance.yearSelect.addEventListener("change", function() {
+                            instance.currentYear = parseInt(this.value);
+                            instance.redraw();
+                        });
+                        instance.calendarContainer.insertBefore(instance.yearSelect, instance.calendarContainer.firstChild);
+                    }
+
+                    if (!instance.monthSelect) {
+                        instance.monthSelect = document.createElement("select");
+                        instance.monthSelect.className = "monthselect";
+                        const months = instance.l10n.months.longhand;
+                        months.forEach((month, index) => {
+                            const option = document.createElement("option");
+                            option.value = index;
+                            option.textContent = month;
+                            instance.monthSelect.appendChild(option);
+                        });
+                        instance.monthSelect.value = instance.currentMonth;
+                        instance.monthSelect.addEventListener("change", function() {
+                            instance.changeMonth(parseInt(this.value));
+                        });
+                        instance.calendarContainer.insertBefore(instance.monthSelect, instance.calendarContainer.children[1]);
+                    }
+                }
+            });
+        }
+
+        const deliveryDatePicker = createCustomDatePicker("#deliveryDate");
+        const expectedDatePicker = createCustomDatePicker("#expectedDate");
 
         function calculatePenalty() {
-            // Get input values
-            const villaValue = parseFloat(document.getElementById('villaValue').value);
-            const deliveryDate = new Date(document.getElementById('deliveryDate').value);
-            const expectedDate = new Date(document.getElementById('expectedDate').value);
+            const villaValue = parseFloat(villaValueInput.value.replace(/[^\d]/g, ''));
+            const deliveryDate = deliveryDatePicker.selectedDates[0];
+            const expectedDate = expectedDatePicker.selectedDates[0];
 
-            // Calculate the difference in days
-            const timeDifference = expectedDate - deliveryDate;
+            if (isNaN(villaValue) || !deliveryDate || !expectedDate) {
+                alert("الرجاء إدخال جميع البيانات المطلوبة");
+                return;
+            }
+
+            const timeDifference = expectedDate.getTime() - deliveryDate.getTime();
             const daysDifference = timeDifference / (1000 * 3600 * 24);
 
-            // Calculate the percentage amount
-            const amountPercentage = villaValue * 0.07; // Assuming 7% penalty rate
-
-            // Calculate the daily amount
+            const amountPercentage = villaValue * 0.07;
             const dailyAmount = amountPercentage / 365;
-
-            // Calculate the estimated compensation amount
             const compensationAmount = dailyAmount * daysDifference;
 
-            // Display results with formatted numbers
-            document.getElementById('amountPercentage').innerText = formatNumberWithCommas(amountPercentage.toFixed(2));
-            document.getElementById('daysDifference').innerText = convertToArabicNumbers(Math.round(daysDifference));
-            document.getElementById('dailyAmount').innerText = formatNumberWithCommas(dailyAmount.toFixed(2));
-            document.getElementById('compensationAmount').innerText = formatNumberWithCommas(compensationAmount.toFixed(2));
+            document.getElementById('amountPercentage').innerText = toArabicNumeral(formatNumber(Math.round(amountPercentage)));
+            document.getElementById('daysDifference').innerText = toArabicNumeral(formatNumber(Math.round(daysDifference)));
+            document.getElementById('dailyAmount').innerText = toArabicNumeral(formatNumber(Math.round(dailyAmount)));
+            document.getElementById('compensationAmount').innerText = toArabicNumeral(formatNumber(Math.round(compensationAmount)));
         }
     </script>
 </body>
