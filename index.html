@@ -118,9 +118,26 @@
     </div>
 
     <script>
+        // دالة لتحويل الأرقام الإنجليزية إلى أرقام عربية
+        function convertToArabicNumbers(input) {
+            const arabicNumbers = {
+                0: '٠',
+                1: '١',
+                2: '٢',
+                3: '٣',
+                4: '٤',
+                5: '٥',
+                6: '٦',
+                7: '٧',
+                8: '٨',
+                9: '٩'
+            };
+            return input.toString().replace(/\d/g, (digit) => arabicNumbers[digit]);
+        }
+
         function formatNumberWithCommas(number) {
             // Format the number with Arabic digits and add commas
-            return number.toLocaleString('ar-EG');
+            return convertToArabicNumbers(number.toLocaleString('en-US'));
         }
 
         function calculatePenalty() {
@@ -144,7 +161,7 @@
 
             // Display results with formatted numbers
             document.getElementById('amountPercentage').innerText = formatNumberWithCommas(amountPercentage.toFixed(2));
-            document.getElementById('daysDifference').innerText = formatNumberWithCommas(daysDifference);
+            document.getElementById('daysDifference').innerText = convertToArabicNumbers(Math.round(daysDifference));
             document.getElementById('dailyAmount').innerText = formatNumberWithCommas(dailyAmount.toFixed(2));
             document.getElementById('compensationAmount').innerText = formatNumberWithCommas(compensationAmount.toFixed(2));
         }
