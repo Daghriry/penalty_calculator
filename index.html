@@ -44,6 +44,13 @@
             border-radius: 5px;
             font-size: 14px;
         }
+        input[type="number"] {
+            direction: rtl;
+        }
+        input[type="date"] {
+            direction: ltr;
+            text-align: right;
+        }
         button {
             width: 100%;
             padding: 12px;
@@ -111,6 +118,11 @@
     </div>
 
     <script>
+        function formatNumberWithCommas(number) {
+            // Format the number with Arabic digits and add commas
+            return number.toLocaleString('ar-EG');
+        }
+
         function calculatePenalty() {
             // Get input values
             const villaValue = parseFloat(document.getElementById('villaValue').value);
@@ -130,11 +142,11 @@
             // Calculate the estimated compensation amount
             const compensationAmount = dailyAmount * daysDifference;
 
-            // Display results
-            document.getElementById('amountPercentage').innerText = amountPercentage.toFixed(2);
-            document.getElementById('daysDifference').innerText = daysDifference;
-            document.getElementById('dailyAmount').innerText = dailyAmount.toFixed(2);
-            document.getElementById('compensationAmount').innerText = compensationAmount.toFixed(2);
+            // Display results with formatted numbers
+            document.getElementById('amountPercentage').innerText = formatNumberWithCommas(amountPercentage.toFixed(2));
+            document.getElementById('daysDifference').innerText = formatNumberWithCommas(daysDifference);
+            document.getElementById('dailyAmount').innerText = formatNumberWithCommas(dailyAmount.toFixed(2));
+            document.getElementById('compensationAmount').innerText = formatNumberWithCommas(compensationAmount.toFixed(2));
         }
     </script>
 </body>
