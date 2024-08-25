@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حساب الشرط الجزائي للفلة</title>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            text-align: right;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+        }
+        h2 {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: auto;
+        }
+        label {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+        input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            font-size: 18px;
+        }
+        .result p {
+            margin: 10px 0;
+        }
+        .result p span {
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <h2>حساب الشرط الجزائي للفلة</h2>
+    <form id="calculationForm">
+        <label for="villaValue">قيمة الفلة بدون الضريبة:</label>
+        <input type="number" id="villaValue" placeholder="أدخل قيمة الفلة" required>
+
+        <label for="deliveryDate">موعد التسليم حسب العقد:</label>
+        <input type="date" id="deliveryDate" required>
+
+        <label for="expectedDate">موعد الاستلام المتوقع:</label>
+        <input type="date" id="expectedDate" required>
+
+        <button type="button" onclick="calculatePenalty()">احسب</button>
+    </form>
+
+    <div class="result" id="result">
+        <p>نسبة المبلغ: <span id="amountPercentage">-</span></p>
+        <p>فرق الأيام: <span id="daysDifference">-</span></p>
+        <p>المبلغ اليومي: <span id="dailyAmount">-</span></p>
+        <p><strong>مبلغ التعويض المقدر:</strong> <span id="compensationAmount">-</span></p>
+    </div>
+
+    <script>
+        function calculatePenalty() {
+            // Get input values
+            const villaValue = parseFloat(document.getElementById('villaValue').value);
+            const deliveryDate = new Date(document.getElementById('deliveryDate').value);
+            const expectedDate = new Date(document.getElementById('expectedDate').value);
+
+            // Calculate the difference in days
+            const timeDifference = expectedDate - deliveryDate;
+            const daysDifference = timeDifference / (1000 * 3600 * 24);
+
+            // Calculate the percentage amount
+            const amountPercentage = villaValue * 0.07; // Assuming 7% penalty rate
+
+            // Calculate the daily amount
+            const dailyAmount = amountPercentage / 365;
+
+            // Calculate the estimated compensation amount
+            const compensationAmount = dailyAmount * daysDifference;
+
+            // Display results
+            document.getElementById('amountPercentage').innerText = amountPercentage.toFixed(2);
+            document.getElementById('daysDifference').innerText = daysDifference;
+            document.getElementById('dailyAmount').innerText = dailyAmount.toFixed(2);
+            document.getElementById('compensationAmount').innerText = compensationAmount.toFixed(2);
+        }
+    </script>
+</body>
+</html>
