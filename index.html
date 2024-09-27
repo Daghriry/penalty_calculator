@@ -1,248 +1,148 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>حساب الشرط الجزائي للفيلا</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://npmcdn.com/flatpickr/dist/l10n/ar.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            font-family: 'Almarai', sans-serif;
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+            --border-color: #bdc3c7;
         }
         body {
-            direction: rtl;
-            text-align: right;
-            padding: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
             margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
         h2 {
-            background-color: #007bff;
-            color: white;
-            padding: 15px;
-            border-radius: 5px;
+            color: var(--primary-color);
             text-align: center;
-            margin-bottom: 20px;
-        }
-        form {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            margin: auto;
+            margin-bottom: 30px;
         }
         label {
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 10px;
             display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
         }
-        input[type="text"] {
+        input, button {
             width: 100%;
             padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 14px;
-            font-family: 'Almarai', sans-serif;
-        }
-        input[type="text"] {
-            direction: ltr;
-            text-align: right;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 16px;
         }
         button {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            background-color: #007bff;
+            background-color: var(--secondary-color);
             color: white;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            margin-top: 20px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #27ae60;
         }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e9ecef;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            font-size: 18px;
+        #formattedValue {
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 20px;
         }
-        .result p {
+        #result {
+            background-color: #f9f9f9;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        #result p {
             margin: 10px 0;
         }
-        .result p span {
-            font-weight: bold;
-            color: #007bff;
+        #result strong {
+            color: var(--primary-color);
         }
         .footer {
             text-align: center;
-            margin-top: 40px;
-            font-size: 14px;
-            color: #555;
-        }
-        #formattedValue {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
-            color: #007bff;
-        }
-        .flatpickr-calendar {
-            direction: rtl;
-            font-family: 'Almarai', sans-serif;
-        }
-        .flatpickr-current-month {
-            display: none;
-        }
-        .flatpickr-monthDropdown-months {
-            display: none;
-        }
-        .flatpickr-months .flatpickr-month {
-            height: auto;
-        }
-        .numInputWrapper {
-            display: none;
-        }
-        .yearselect, .monthselect {
-            width: 100%;
-            padding: 5px;
-            font-size: 16px;
-            margin-bottom: 10px;
-            font-family: 'Almarai', sans-serif;
-        }
-        .flatpickr-day {
-            font-family: 'Almarai', sans-serif;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
-    <h2>حساب الشرط الجزائي للفيلا</h2>
-    <form id="calculationForm">
+    <div class="container">
+        <h2>حساب الشرط الجزائي للفيلا</h2>
+
         <label for="villaValue">قيمة الفيلا بدون الضريبة:</label>
-        <input type="text" id="villaValue" placeholder="أدخل قيمة الفيلا" required>
+        <input type="number" id="villaValue" placeholder="أدخل قيمة الفيلا">
+
         <div id="formattedValue"></div>
 
-        <label for="deliveryDate">موعد التسليم حسب العقد:</label>
-        <input type="text" id="deliveryDate" placeholder="اختر التاريخ" required>
+        <label for="contractDate">موعد التسليم حسب العقد:</label>
+        <input type="date" id="contractDate">
 
         <label for="expectedDate">موعد الاستلام المتوقع:</label>
-        <input type="text" id="expectedDate" placeholder="اختر التاريخ" required>
+        <input type="date" id="expectedDate">
 
-        <button type="button" onclick="calculatePenalty()">احسب</button>
-    </form>
+        <button onclick="calculate()">احسب</button>
 
-    <div class="result" id="result">
-        <p>نسبة المبلغ: <span id="amountPercentage">-</span></p>
-        <p>فرق الأيام: <span id="daysDifference">-</span></p>
-        <p>المبلغ اليومي: <span id="dailyAmount">-</span></p>
-        <p><strong>مبلغ التعويض المقدر:</strong> <span id="compensationAmount">-</span></p>
-    </div>
+        <div id="result">
+            <p>نسبة المبلغ: <strong><span id="amountPercentage">-</span></strong></p>
+            <p>فرق الأيام: <strong><span id="daysDifference">-</span></strong></p>
+            <p>المبلغ اليومي: <strong><span id="dailyAmount">-</span></strong></p>
+            <p>مبلغ التعويض المقدر: <strong><span id="compensationAmount">-</span></strong></p>
+        </div>
 
-    <div class="footer">
-        <p>تم إنشاء الصفحة بواسطة أبو وسيم :)</p>
+        <div class="footer">
+            تم إنشاء الصفحة بواسطة أبو وسيم :)
+        </div>
     </div>
 
     <script>
-        const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-
-        function toArabicNumeral(en) {
-            return en.replace(/[0-9]/g, w => arabicNumbers[+w]);
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ar-SA', { style: 'currency', currency: 'SAR' }).format(amount);
         }
 
-        function formatNumber(num) {
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "،");
-        }
+        function calculate() {
+            const villaValue = parseFloat(document.getElementById('villaValue').value);
+            const contractDate = new Date(document.getElementById('contractDate').value);
+            const expectedDate = new Date(document.getElementById('expectedDate').value);
 
-        const villaValueInput = document.getElementById('villaValue');
-        const formattedValueDiv = document.getElementById('formattedValue');
-
-        villaValueInput.addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^\d]/g, '');
-            const formatted = formatNumber(this.value);
-            const arabicFormatted = toArabicNumeral(formatted);
-            formattedValueDiv.textContent = arabicFormatted;
-        });
-
-        function createCustomDatePicker(elementId) {
-            return flatpickr(elementId, {
-                locale: "ar",
-                dateFormat: "Y/m/d",
-                disableMobile: "true",
-                onOpen: function(selectedDates, dateStr, instance) {
-                    if (!instance.yearSelect) {
-                        instance.yearSelect = document.createElement("select");
-                        instance.yearSelect.className = "yearselect";
-                        const currentYear = new Date().getFullYear();
-                        for (let year = currentYear - 10; year <= currentYear + 10; year++) {
-                            const option = document.createElement("option");
-                            option.value = year;
-                            option.textContent = toArabicNumeral(year.toString());
-                            instance.yearSelect.appendChild(option);
-                        }
-                        instance.yearSelect.value = instance.currentYear;
-                        instance.yearSelect.addEventListener("change", function() {
-                            instance.currentYear = parseInt(this.value);
-                            instance.redraw();
-                        });
-                        instance.calendarContainer.insertBefore(instance.yearSelect, instance.calendarContainer.firstChild);
-                    }
-
-                    if (!instance.monthSelect) {
-                        instance.monthSelect = document.createElement("select");
-                        instance.monthSelect.className = "monthselect";
-                        const months = instance.l10n.months.longhand;
-                        months.forEach((month, index) => {
-                            const option = document.createElement("option");
-                            option.value = index;
-                            option.textContent = month;
-                            instance.monthSelect.appendChild(option);
-                        });
-                        instance.monthSelect.value = instance.currentMonth;
-                        instance.monthSelect.addEventListener("change", function() {
-                            instance.changeMonth(parseInt(this.value));
-                        });
-                        instance.calendarContainer.insertBefore(instance.monthSelect, instance.calendarContainer.children[1]);
-                    }
-                }
-            });
-        }
-
-        const deliveryDatePicker = createCustomDatePicker("#deliveryDate");
-        const expectedDatePicker = createCustomDatePicker("#expectedDate");
-
-        function calculatePenalty() {
-            const villaValue = parseFloat(villaValueInput.value.replace(/[^\d]/g, ''));
-            const deliveryDate = deliveryDatePicker.selectedDates[0];
-            const expectedDate = expectedDatePicker.selectedDates[0];
-
-            if (isNaN(villaValue) || !deliveryDate || !expectedDate) {
-                alert("الرجاء إدخال جميع البيانات المطلوبة");
+            if (isNaN(villaValue) || isNaN(contractDate.getTime()) || isNaN(expectedDate.getTime())) {
+                alert('الرجاء إدخال جميع البيانات بشكل صحيح');
                 return;
             }
 
-            const timeDifference = expectedDate.getTime() - deliveryDate.getTime();
-            const daysDifference = timeDifference / (1000 * 3600 * 24);
+            document.getElementById('formattedValue').textContent = formatCurrency(villaValue);
 
-            const amountPercentage = villaValue * 0.07;
-            const dailyAmount = amountPercentage / 365;
+            const daysDifference = Math.ceil((expectedDate - contractDate) / (1000 * 60 * 60 * 24));
+            const amountPercentage = 0.07; // 7%
+            const dailyAmount = (villaValue * amountPercentage) / 365;
             const compensationAmount = dailyAmount * daysDifference;
 
-            document.getElementById('amountPercentage').innerText = toArabicNumeral(formatNumber(Math.round(amountPercentage)));
-            document.getElementById('daysDifference').innerText = toArabicNumeral(formatNumber(Math.round(daysDifference)));
-            document.getElementById('dailyAmount').innerText = toArabicNumeral(formatNumber(Math.round(dailyAmount)));
-            document.getElementById('compensationAmount').innerText = toArabicNumeral(formatNumber(Math.round(compensationAmount)));
+            document.getElementById('amountPercentage').textContent = (amountPercentage * 100) + '%';
+            document.getElementById('daysDifference').textContent = daysDifference;
+            document.getElementById('dailyAmount').textContent = formatCurrency(dailyAmount);
+            document.getElementById('compensationAmount').textContent = formatCurrency(compensationAmount);
         }
+
+        // Initialize date inputs with today's date
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('contractDate').value = today;
+        document.getElementById('expectedDate').value = today;
     </script>
 </body>
 </html>
